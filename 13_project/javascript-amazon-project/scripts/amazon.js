@@ -104,6 +104,10 @@ document.querySelectorAll('.js-addtocart')
                 Quantity:1
             })
         }
-        console.log(cart);
+        let cartQuantity=0;
+        cart.forEach((Item)=>{
+            cartQuantity+=Item.Quantity;
+        })
+        document.querySelector('.js-cart-quantity').innerHTML=cartQuantity;
     })
 })
