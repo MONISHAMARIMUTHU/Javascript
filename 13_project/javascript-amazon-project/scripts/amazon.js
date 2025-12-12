@@ -31,7 +31,7 @@
 
 // data is from another js file.So no need for above project
 
-import {cart} from "../data/cart.js";
+import {cart,addToCart} from "../data/cart.js";
 import { products } from "../data/products.js";
 
 let productsHTML='';
@@ -89,29 +89,21 @@ products.forEach((product)=>{
 
 document.querySelector('.js-producthtml').innerHTML=productsHTML;
 
+
+function updateCartQuantity(){
+    let cartQuantity=0;
+        
+        cart.forEach((cartItem)=>{
+            cartQuantity+=cartItem.Quantity;
+        })
+        document.querySelector('.js-cart-quantity').innerHTML=cartQuantity;
+}
+
 document.querySelectorAll('.js-addtocart')
 .forEach((button)=>{
     button.addEventListener('click',()=>{
         const productId=button.dataset.productId;
-        let matchingItem;
-        cart.forEach((Item)=>{
-            if(productId===Item.productId){
-                matchingItem=Item;
-            }
-        })
-        if(matchingItem){
-            matchingItem.Quantity+=1;
-        }
-        else{
-            cart.push({
-                productId:productId,
-                Quantity:1
-            })
-        }
-        let cartQuantity=0;
-        cart.forEach((Item)=>{
-            cartQuantity+=Item.Quantity;
-        })
-        document.querySelector('.js-cart-quantity').innerHTML=cartQuantity;
+        addToCart(productId); 
+        updateCartQuantity();
     })
 })
