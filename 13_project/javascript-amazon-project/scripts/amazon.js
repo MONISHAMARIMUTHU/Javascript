@@ -30,6 +30,9 @@
 
 
 // data is from another js file.So no need for above project
+
+import {cart} from "../data/cart.js";
+
 let productsHTML='';
 products.forEach((product)=>{
     productsHTML+=`
