@@ -11,7 +11,10 @@ import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 
 import {deliveryOptions} from '../data/deliveryOptions.js';
 
-let cartSummaryHTML='';
+
+
+function renderOrderSummary() {
+    let cartSummaryHTML='';
 
 cart.forEach((cartItem)=>{
     const productId=cartItem.productId;
@@ -56,7 +59,7 @@ cart.forEach((cartItem)=>{
             </div>
             <div class="product-quantity">
                 <span>
-                Quantity: <span class="quantity-label">${cartItem.Quantity}</span>
+                quantity: <span class="quantity-label">${cartItem.quantity}</span>
                 </span>
                 <span class="update-quantity-link link-primary">
                 Update
@@ -78,6 +81,12 @@ cart.forEach((cartItem)=>{
         </div>
     `;
 });
+    document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML;
+    attachEventListeners();
+}
+
+renderOrderSummary();
+
 
 function deliveryOptionsHTML(matchingProduct,cartItem){
     let html='';
@@ -94,7 +103,7 @@ function deliveryOptionsHTML(matchingProduct,cartItem){
         html+=
         `<div class="delivery-option js-delivery-option"
             data-product-id="${matchingProduct.id}"
-            data-delivery-option-id="${matchingProduct.id}">
+            data-delivery-option-id="${deliveryOption.id}">
             <input type="radio"
                 ${isChecked?'checked':''}                  //to tick the radio button
             class="delivery-option-input"
@@ -112,23 +121,55 @@ function deliveryOptionsHTML(matchingProduct,cartItem){
     return html;
 };
 
-document.querySelector('.js-order-summary').innerHTML=cartSummaryHTML;
+// document.querySelector('.js-order-summary').innerHTML=cartSummaryHTML;
 
-document.querySelectorAll('.js-delete-link')
-    .forEach((link)=>{
-        link.addEventListener('click',()=>{
-            const productId=link.dataset.productId;
-            removeFromCart(productId);
+// document.querySelectorAll('.js-delete-link')
+//     .forEach((link)=>{
+//         link.addEventListener('click',()=>{
+//             const productId=link.dataset.productId;
+//             removeFromCart(productId);
             
-        const container = document.querySelector(`.js-cart-item-container-${productId}`);
-        container.remove();       //To remove it from page built-in
-        });
-    });
+//         const container = document.querySelector(`.js-cart-item-container-${productId}`);
+//         container.remove();       //To remove it from page built-in
+//         });
+//     });
 
-document.querySelectorAll('.js-delivery-option')
-    .forEach((element)=>{
-        element.addEventListener('click',()=>{
-            const {productId,deliveryOptionId}=element.dataset;
-            updateDeliveryOption(productId,deliveryOptionId);
+// document.querySelectorAll('.js-delivery-option')
+//     .forEach((element)=>{
+//         element.addEventListener('click',()=>{
+//             const {productId,deliveryOptionId}=element.dataset;
+//             updateDeliveryOption(productId,deliveryOptionId);
+//         });
+//     });
+
+
+
+function attachEventListeners() {
+    document.querySelectorAll('.js-delete-link')
+        .forEach((link) => {
+            link.addEventListener('click', () => {
+                const productId = link.dataset.productId;
+                removeFromCart(productId);
+                renderOrderSummary();
+            });
         });
-    });
+
+    document.querySelectorAll('.js-delivery-option')
+        .forEach((element) => {
+            element.addEventListener('click', () => {
+                const { productId, deliveryOptionId } = element.dataset;
+                updateDeliveryOption(productId, deliveryOptionId);
+                renderOrderSummary(); // 🔥 THIS updates delivery date
+            });
+        });
+}
+
+
+
+// In vanilla JavaScript, state changes do not automatically update the UI, 
+// so we must re-render the DOM whenever data changes.
+
+// renderOrderSummary()
+//  ├── build HTML
+//  ├── set innerHTML
+//  └── attachEventListeners()
